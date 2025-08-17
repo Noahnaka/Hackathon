@@ -2,12 +2,16 @@ const express = require('express');
 const path = require('path');
 const roteadorMensagem = require('./Route/roteadorMensagem');
 const roteadorUser = require('./Route/roteadorUser');
+const Message = require('./Model/Message');
+
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
 const client = new Client({
     authStrategy: new LocalAuth()  
 });
+
+const message = new Message(client);
 
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
@@ -33,6 +37,16 @@ app.use('/send/message',
 app.use('/user/data',
     routeUser.criarRotasUser()
 );
+
+async function dispararAlertas() {
+    await message.disparar_alertas();
+}
+
+setTimeout(() => {
+    dispararAlertas();
+    setInterval(dispararAlertas, 24 * 60 * 60 * 1000);
+}, 12 * 1000);
+
 
 app.listen(porta, () => {
     console.log(`API rodando no endereço: http://localhost:${porta}/`)
