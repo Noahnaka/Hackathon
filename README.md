@@ -30,6 +30,7 @@ npm install cors
 1. Copia e cola no terminal:
 ```bash
 node Servidor.js
+Rodar Index.html usando live server
 ```
 
 2. O servidor vai iniciar na URL `http://localhost:3000`

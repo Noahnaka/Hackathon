@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Caça Fumaça - Alerta Climático ODS 13</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="" href="images/logo-aba.png" />
+    <link rel="stylesheet" href="/style/style.css" />
+  </head>
+  <body class="text-gray-200">
+    <div class="container mx-auto px-4 py-8 md:py-16">
+      <section
+        id="radar"
+        class="min-h-screen flex flex-col items-center justify-center text-center"
+      >
+        <h1 class="text-4xl md:text-6xl font-black uppercase mb-6">
+          O alerta que chega antes da tempestade.
+        </h1>
+        <div class="w-full max-w-lg">
+          <input
+            id="cidadeInput"
+            type="text"
+            class="w-full p-4 mb-4 text-center text-lg bg-gray-800/60 backdrop-blur-sm border-2 border-gray-500 rounded-lg focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 placeholder-gray-400"
+            placeholder="DIGITE SUA CIDADE"
+          />
+          <input
+            id="nomeInput"
+            type="text"
+            class="w-full p-4 text-center text-lg bg-gray-800/60 backdrop-blur-sm border-2 border-gray-500 rounded-lg focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 placeholder-gray-400"
+            placeholder="DIGITE O SEU NOME"
+          />
+          <input
+            id="phoneInput"
+            type="text"
+            class="w-full p-4 text-center text-lg bg-gray-800/60 backdrop-blur-sm border-2 border-gray-500 rounded-lg focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400 placeholder-gray-400"
+            placeholder="DIGITE SEU NÚMERO DE CELULAR"
+          />
+          <button id="submitButton" class="button">
+            <span class="button_lg">
+              <span class="button_sl"></span>
+              <span class="button_text">Receber notificações do clima em sua cidade.</span>
+            </span>
+          </button>
+        </div>
+        <div id="alertModal" class="modal-overlay">
+          <div class="modal-content">
+            <h2 class="modal-title"></h2>
+            <p id="modalMessage" class="modal-message"></p>
+            <button id="closeModalBtn" class="modal-close-btn">Ok!</button>
+          </div>
+        </div>
+      </section>
+
+      <main id="resilience-center" class="space-y-12" style="display: none">
+        <section id="weather-info" class="main-card text-center"></section>
+
+        <section class="main-card">
+          <h2 class="section-title">🚨 Alertas Críticos e Recomendações</h2>
+          <div id="alerts-container"></div>
+        </section>
+
+        <section class="main-card">
+          <h2 class="section-title">📅 Previsão para os Próximos Dias</h2>
+          <div
+            id="forecast-container"
+            class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center"
+          ></div>
+        </section>
+
+        
+        <section class="main-card">
+          <h2 class="section-title">🏆 Gamificação Sustentável</h2>
+          <div class="gamification-box">
+            <p class="text-lg">Seus Pontos de Resiliência</p>
+            <p class="text-5xl font-bold text-yellow-300">1.250</p>
+            <p class="mt-2 text-sm text-gray-400">
+              Continue seguindo as recomendações e fortaleça a comunidade!
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+<footer class="w-full py-8 mt-16 border-t border-gray-700/50 flex flex-col items-center gap-8">
+    <div class="container mx-auto px-4 flex flex-col lg:flex-row justify-center items-start gap-12">
+
+        <div class="w-full max-w-sm flex-shrink-0">
+            <div class="h-full bg-gray-900/[0.7] backdrop-blur-lg border border-gray-700/[0.5] [clip-path:polygon(_30px_0%,_100%_0,_100%_calc(100%_-_30px),_calc(100%_-_30px)_100%,_0_100%,_0%_30px_)] rounded-tr-[20px] rounded-bl-[20px] flex flex-col p-6">
+                <div class="w-28 h-28 bg-[rgb(41,_41,_41)] rounded-[15px] mx-auto mt-2 mb-4 flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" height="80" width="80" class="m-auto text-cyan-300" fill="none">
+                        <path stroke-linejoin="round" stroke="currentColor" d="M16 6.27975C16 6.88118 15.7625 7.45883 15.3383 7.88611C14.3619 8.87007 13.415 9.89605 12.4021 10.8443C12.17 11.0585 11.8017 11.0507 11.5795 10.8268L8.6615 7.88611C7.7795 6.99725 7.7795 5.56225 8.6615 4.67339C9.55218 3.77579 11.0032 3.77579 11.8938 4.67339L11.9999 4.78027L12.1059 4.67345C12.533 4.24286 13.1146 4 13.7221 4C14.3297 4 14.9113 4.24284 15.3383 4.67339C15.7625 5.10073 16 5.67835 16 6.27975Z"></path>
+                        <path stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" d="M18 20L21.8243 16.1757C21.9368 16.0632 22 15.9106 22 15.7515V10.5C22 9.67157 21.3284 9 20.5 9V9C19.6716 9 19 9.67157 19 10.5V15"></path>
+                        <path stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" d="M18 16L18.8581 15.1419C18.949 15.051 19 14.9278 19 14.7994V14.7994C19 14.6159 18.8963 14.4482 18.7322 14.3661L18.2893 14.1447C17.5194 13.7597 16.5894 13.9106 15.9807 14.5193L15.0858 15.4142C14.7107 15.7893 14.5 16.298 14.5 16.8284V20"></path>
+                        <path stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" d="M6 20L2.17574 16.1757C2.06321 16.0632 2 15.9106 2 15.7515V10.5C2 9.67157 2.67157 9 3.5 9V9C4.32843 9 5 9.67157 5 10.5V15"></path>
+                        <path stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" d="M6 16L5.14187 15.1419C5.05103 15.051 5 14.9278 5 14.7994V14.7994C5 14.6159 5.10366 14.4482 5.26776 14.3661L5.71067 14.1447C6.48064 13.7597 7.41059 13.9106 8.01931 14.5193L8.91421 15.4142C9.28929 15.7893 9.5 16.298 9.5 16.8284V20"></path>
+                    </svg>
+                </div>
+                <span class="font-bold text-white text-center block text-xl">Doe para projetos sustentáveis</span>
+                <p class="font-normal text-gray-300 block text-center text-sm mt-3 mb-5 mx-2">Sua contribuição fortalece a luta contra as mudanças climáticas e apoia a ODS 13. Clique abaixo para apoiar.</p>
+                <a id="donateButton" href="#" target="_blank" class="group/button relative inline-flex items-center justify-center overflow-hidden rounded-md bg-gray-800/30 backdrop-blur-lg px-6 py-3 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl hover:shadow-cyan-400/15 border border-white/20 w-[90%] mx-auto mt-auto">
+                    <span class="group/link font-bold text-white text-center block text-lg group-hover/button:text-cyan-300">Apoiar Causa</span>
+                    <div class="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/button:duration-1000 group-hover/button:[transform:skew(-13deg)_translateX(100%)]">
+                        <div class="relative h-full w-10 bg-white/20"></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="w-full lg:max-w-4xl">
+            <div class="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg p-6">
+                <h2 class="text-3xl font-bold mb-6 text-cyan-300 text-center lg:text-left">🏆 Ranking da Ação Climática</h2>
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="border-b border-gray-600">
+                            <th class="p-4 text-base font-semibold uppercase text-gray-400">Pos.</th>
+                            <th class="p-4 text-base font-semibold uppercase text-gray-400">Nome</th>
+                            <th class="p-4 text-base font-semibold uppercase text-gray-400 text-right">Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ranking-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-8 mt-8">
+        <div class="logo-placeholder"><img src="/images/logo-uni.png" alt="Logo Univap"></div>
+        <div class="logo-placeholder"><img src="images/hackaton.png" alt="Logo Hackathon"></div>
+    </div>
+</footer>
+   <script src="apis/payApi.js" type="module"></script>
+    <script src="script.js" type="module"></script>
+  </body>
+</html>
