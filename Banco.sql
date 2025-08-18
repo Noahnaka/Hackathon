@@ -5,5 +5,6 @@ create table hackathon.tbl_dados_usuario(
     nome varchar(255) not null,
     telefone varchar(255) not null,
     localizacao varchar(255) not null,
+    pontos int not null,
     timestamp timestamp
 );

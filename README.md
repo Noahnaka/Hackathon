@@ -20,6 +20,7 @@ npm install
 npm install whatsapp-web.js qrcode-terminal
 npm install express
 npm install mysql2
+npm install cors
 ```
 
 ## Como rodar

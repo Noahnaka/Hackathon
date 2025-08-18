@@ -12,6 +12,14 @@ module.exports = class roteadorMensagem {
             this._userControl.user_data_control,
         )
 
+        this._router.get('/',
+            this._userControl.get_data_control,
+        )
+
+        this._router.put('/',
+            this._userControl.update_data_control,
+        )
+
         return this._router;
     }
 }

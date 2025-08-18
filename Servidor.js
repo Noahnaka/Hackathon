@@ -3,6 +3,7 @@ const path = require('path');
 const roteadorMensagem = require('./Route/roteadorMensagem');
 const roteadorUser = require('./Route/roteadorUser');
 const Message = require('./Model/Message');
+const cors = require('cors');
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
@@ -23,6 +24,13 @@ client.on('ready', () => {
  
 const app = express();
 const porta = 3000;
+
+app.use(cors({
+    origin: ['http://127.0.0.1:5500', 'http://localhost:5500', 'http://localhost:3000'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'View')));
