@@ -16,6 +16,54 @@
   </head>
   <body class="text-gray-200">
     <div class="container mx-auto px-4 py-8 md:py-16">
+      
+
+      <div class="mb-8">
+        <div class="bg-gray-900/70 backdrop-blur-lg border border-gray-700 rounded-xl p-6 donation-progress-container">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-cyan-300">🌱 Meta de Doações Comunitárias</h2>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-yellow-300" id="total-donations">R$ 0</div>
+              <div class="text-sm text-gray-400">de R$ 10.000</div>
+            </div>
+          </div>
+          
+
+          <div class="mb-3">
+            <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+              <div 
+                id="donation-progress-bar" 
+                class="h-4 bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 rounded-full transition-all duration-1000 ease-out"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+          
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div class="bg-gray-800/50 rounded-lg p-3 progress-stat">
+              <div class="text-2xl font-bold text-green-400" id="donation-count">0</div>
+              <div class="text-sm text-gray-300">Doações</div>
+            </div>
+            <div class="bg-gray-800/50 rounded-lg p-3 progress-stat">
+              <div class="text-2xl font-bold text-blue-400" id="trees-planted">0</div>
+              <div class="text-sm text-gray-300">Árvores Plantadas</div>
+            </div>
+            <div class="bg-gray-800/50 rounded-lg p-3 progress-stat">
+              <div class="text-2xl font-bold text-purple-400" id="carbon-offset">0</div>
+              <div class="text-sm text-gray-300">CO₂ Compensado (kg)</div>
+            </div>
+          </div>
+          
+
+          <div class="mt-4 text-center">
+            <p class="text-gray-300 motivational-message" id="motivational-message">
+              Cada doação conta! Vamos juntos alcançar nossa meta climática! 🌍
+            </p>
+          </div>
+        </div>
+      </div>
+      
       <section
         id="radar"
         class="min-h-screen flex flex-col items-center justify-center text-center"
@@ -56,6 +104,59 @@
             <button id="closeModalBtn" class="modal-close-btn">Ok!</button>
           </div>
         </div>
+        
+
+
+
+            <h2 class="modal-title text-green-600">🎮 MeteoGame - Simulador Climático</h2>
+            
+            <div class="preview-game-container mb-6">
+              <div class="text-center mb-4">
+                <div class="text-4xl mb-2">🌍</div>
+                <h3 class="text-xl font-bold text-cyan-300">Sua Cidade Virtual</h3>
+                <p class="text-sm text-gray-600">Faça escolhas e veja o impacto imediato!</p>
+              </div>
+              
+      
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-green-500" id="city-trees">5</div>
+                  <div class="text-xs text-gray-500">Árvores</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-blue-500" id="city-air">85</div>
+                  <div class="text-xs text-gray-500">Qualidade do Ar</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-2xl font-bold text-yellow-500" id="city-energy">60</div>
+                  <div class="text-xs text-gray-500">Energia Limpa %</div>
+                </div>
+              </div>
+              
+      
+              <div class="space-y-3 mb-4">
+                <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <span class="text-sm">🌱 Plantar uma árvore</span>
+                  <button class="preview-choice-btn bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm" data-action="plant-tree" data-cost="10">R$ 10</button>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <span class="text-sm">☀️ Instalar painel solar</span>
+                  <button class="preview-choice-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm" data-action="solar-panel" data-cost="50">R$ 50</button>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                  <span class="text-sm">🚲 Construir ciclovia</span>
+                  <button class="preview-choice-btn bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm" data-action="bike-lane" data-cost="30">R$ 30</button>
+                </div>
+              </div>
+              
+      
+              <div id="preview-result" class="hidden p-3 bg-green-100 border border-green-300 rounded-lg text-center">
+                <p class="text-green-800 font-semibold">✨ Impacto Positivo!</p>
+                <p class="text-green-700 text-sm">Sua escolha melhorou a cidade!</p>
+              </div>
+            </div>
+            
+
       </section>
 
       <main id="resilience-center" class="space-y-12" style="display: none">
@@ -74,23 +175,31 @@
           ></div>
         </section>
 
-        
+        ga
         <section class="main-card">
-          <h2 class="section-title">🏆 Gamificação Sustentável</h2>
-          <div class="gamification-box">
-            <p class="text-lg">Seus Pontos de Resiliência</p>
-            <p class="text-5xl font-bold text-yellow-300">1.250</p>
-            <p class="mt-2 text-sm text-gray-400">
-              Continue seguindo as recomendações e fortaleça a comunidade!
-            </p>
+          <h2 class="section-title">🌬️ Qualidade do Ar e Impacto Climático</h2>
+          
+  
+          <div id="weather-character-container" class="text-center mb-6">
+            <div class="weather-character" id="weather-character">
+              <div class="character-emoji text-6xl mb-2">🌤️</div>
+              <div class="character-message text-lg text-gray-300">Olá! Vamos verificar a qualidade do ar juntos!</div>
+            </div>
+          </div>
+          
+          <div id="air-quality-container">
+            <div class="text-center text-gray-400">
+              <p>Carregando dados de qualidade do ar...</p>
+            </div>
           </div>
         </section>
+
       </main>
     </div>
 <footer class="w-full py-8 mt-16 border-t border-gray-700/50 flex flex-col items-center gap-8">
-    <div class="container mx-auto px-4 flex flex-col lg:flex-row justify-center items-start gap-12">
+    <div class="container mx-auto px-4 flex flex-col lg:flex-row justify-center items-start gap-8">
 
-        <div class="w-full max-w-sm flex-shrink-0">
+        <div class="w-full max-w-xs flex-shrink-0">
             <div class="h-full bg-gray-900/[0.7] backdrop-blur-lg border border-gray-700/[0.5] [clip-path:polygon(_30px_0%,_100%_0,_100%_calc(100%_-_30px),_calc(100%_-_30px)_100%,_0_100%,_0%_30px_)] rounded-tr-[20px] rounded-bl-[20px] flex flex-col p-6">
                 <div class="w-28 h-28 bg-[rgb(41,_41,_41)] rounded-[15px] mx-auto mt-2 mb-4 flex">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" height="80" width="80" class="m-auto text-cyan-300" fill="none">
@@ -109,12 +218,68 @@
                         <div class="relative h-full w-10 bg-white/20"></div>
                     </div>
                 </a>
+                
+                <button id="previewButton" onclick="openMeteoGame()" class="group/preview relative inline-flex items-center justify-center overflow-hidden rounded-md bg-gradient-to-r from-green-600/30 to-blue-600/30 backdrop-blur-lg px-6 py-3 text-base font-semibold text-white transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl hover:shadow-green-400/15 border border-green-400/30 w-[90%] mx-auto mt-4">
+                    <span class="group-hover/preview:text-green-300 text-center block text-lg font-bold">🎮 Quer ver como é?</span>
+                    <div class="absolute inset-0 flex h-full w-full justify-center [transform:skew(-13deg)_translateX(-100%)] group-hover/preview:duration-1000 group-hover/preview:[transform:skew(-13deg)_translateX(100%)]">
+                        <div class="relative h-full w-10 bg-green-400/20"></div>
+                    </div>
+                </button>
+                
+
+            </div>
+        </div>
+
+
+        <div class="w-full max-w-xs flex-shrink-0">
+            <div class="h-full bg-gradient-to-br from-green-900/70 to-blue-900/70 backdrop-blur-lg border border-green-500/30 rounded-[20px] flex flex-col p-6 donation-info-card">
+                <div class="w-16 h-16 bg-green-600/20 rounded-full mx-auto mt-2 mb-4 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-green-400">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-green-300 text-center block text-lg mb-3">Por que doar?</h3>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-start gap-2 donation-impact-item">
+                        <div class="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0 donation-impact-dot"></div>
+                        <p class="text-gray-200">🌱 <strong>Reflorestamento:</strong> Cada R$ 10 plantam 2 árvores nativas</p>
+                    </div>
+                    
+                    <div class="flex items-start gap-2 donation-impact-item">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0 donation-impact-dot"></div>
+                        <p class="text-gray-200">💧 <strong>Água limpa:</strong> Proteção de nascentes e rios</p>
+                    </div>
+                    
+                    <div class="flex items-start gap-2 donation-impact-item">
+                        <div class="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0 donation-impact-dot"></div>
+                        <p class="text-gray-200">☀️ <strong>Energia solar:</strong> Instalação em comunidades carentes</p>
+                    </div>
+                    
+                    <div class="flex items-start gap-2 donation-impact-item">
+                        <div class="w-2 h-2 bg-purple-400 rounded-full mt-2 flex-shrink-0 donation-impact-dot"></div>
+                        <p class="text-gray-200">🏫 <strong>Educação climática:</strong> Capacitação de jovens líderes</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-green-600/20 rounded-lg border border-green-500/30">
+                    <p class="text-xs text-green-200 text-center">
+                        <strong>Impacto real:</strong> 100% das doações são direcionadas para projetos verificados e auditados
+                    </p>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <div class="inline-flex items-center gap-2 bg-yellow-600/20 px-3 py-1 rounded-full border border-yellow-500/30">
+                        <span class="text-yellow-300 text-xs">🏆</span>
+                        <span class="text-yellow-200 text-xs font-semibold">Leaderboard demonstrando maiores doações</span>
+                    </div>
+                </div>
             </div>
         </div>
 
         <div class="w-full lg:max-w-4xl">
             <div class="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg p-6">
-                <h2 class="text-3xl font-bold mb-6 text-cyan-300 text-center lg:text-left">🏆 Ranking da Ação Climática</h2>
+                <h2 class="text-3xl font-bold mb-6 text-cyan-300 text-center lg:text-left">🏆 Top 10 - Ranking da Ação Climática</h2>
                 <table class="w-full text-left">
                     <thead>
                         <tr class="border-b border-gray-600">

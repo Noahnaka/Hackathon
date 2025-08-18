@@ -22,7 +22,7 @@ async function criarPreferenciaDePagamento(nome, valor) {
             console.error("Erro ao criar preferência de pagamento:", await response.json());
             return null;
         }
-//test
+
         const preference = await response.json();
 
     } catch (error) {
@@ -41,9 +41,9 @@ async function criarPreferenciaDePagamento(nome, valor) {
         ],
         back_urls: {
           
-            success: "https://www.google.com.br", // Um endereço que a API aceite
-            failure: "https://www.google.com.br", // Pode ser o mesmo pra todos
-            pending: "https://www.google.com.br"
+                    success: "https://www.google.com.br",
+        failure: "https://www.google.com.br",
+        pending: "https://www.google.com.br"
         },
         auto_return: 'approved'
     };
