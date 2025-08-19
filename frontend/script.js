@@ -1,5 +1,4 @@
 import { criarPreferenciaDePagamento } from './apis/payApi.js';
-import { fetchAirQualityData, getAirQualityColor } from './apis/openAQ.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     const submitButton = document.getElementById("submitButton");
@@ -45,12 +44,13 @@ document.addEventListener("DOMContentLoaded", () => {
             mostrarPrevisao(data.daily);
             gerarAlertaClimatico(data);
             
-        
-            const airQualityData = await fetchAirQualityData(lat, lon);
-            mostrarQualidadeDoAr(airQualityData, cityName);
+            // Fetch NASA climate data after content becomes visible
+            setTimeout(() => {
+                fetchNASAClimateData();
+            }, 1000);
             
         
-            updateWeatherCharacter(data, airQualityData);
+            updateWeatherCharacter(data);
             return true;
         } catch (error) {
             console.error("ERRO NA CHAMADA DA API:", error);
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 nome: nomeValue,
                 cidade: cidadeValue,
                 telefone: phoneValue,
-                pontos: 100
+                pontos: 0
             };
             localStorage.setItem('userData', JSON.stringify(userData));
             
@@ -170,141 +170,27 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function mostrarQualidadeDoAr(airQualityData, cityName) {
-        const container = document.getElementById('air-quality-container');
-        
-        if (!airQualityData) {
-            container.innerHTML = `
-                <div class="text-center">
-                    <div class="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg p-6 mb-4">
-                        <h3 class="text-xl font-bold text-yellow-300 mb-2">⚠️ Dados de Qualidade do Ar Indisponíveis</h3>
-                        <p class="text-gray-300">Não foi possível obter dados de qualidade do ar para ${cityName} no momento.</p>
-                        <p class="text-sm text-gray-400 mt-2">Isso pode acontecer quando não há estações de monitoramento próximas à sua localização.</p>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
-        let html = `
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg p-4">
-                    <h3 class="text-lg font-bold text-cyan-300 mb-3">📊 Resumo da Qualidade do Ar</h3>
-                    <p class="text-sm text-gray-300 mb-2">Última atualização: ${new Date().toLocaleString('pt-BR')}</p>
-                    <p class="text-sm text-gray-400">Dados fornecidos por estações de monitoramento próximas a ${cityName}</p>
-                </div>
-                <div class="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg p-4">
-                    <h3 class="text-lg font-bold text-cyan-300 mb-3">🌱 Impacto na Saúde</h3>
-                    <p class="text-sm text-gray-300">A qualidade do ar está diretamente relacionada às mudanças climáticas e à saúde pública.</p>
-                    <p class="text-sm text-gray-400 mt-2">Poluentes como PM2.5 e O₃ podem agravar problemas respiratórios.</p>
-                </div>
-            </div>
-        `;
 
 
-        Object.keys(airQualityData).forEach(parameter => {
-            const data = airQualityData[parameter];
-            const statusColor = getAirQualityColor(data.status);
-            const parameterNames = {
-                'pm25': 'PM₂.₅ (Material Particulado Fino)',
-                'pm10': 'PM₁₀ (Material Particulado)',
-                'o3': 'O₃ (Ozônio)',
-                'no2': 'NO₂ (Dióxido de Nitrogênio)',
-                'so2': 'SO₂ (Dióxido de Enxofre)',
-                'co': 'CO (Monóxido de Carbono)'
-            };
-            
-            const parameterName = parameterNames[parameter.toLowerCase()] || parameter;
-            
-            html += `
-                <div class="bg-gray-800/60 backdrop-blur-sm border border-gray-700 rounded-lg p-4 mb-4 air-quality-parameter">
-                    <div class="flex items-center justify-between mb-3">
-                        <h4 class="text-lg font-bold text-white">${parameterName}</h4>
-                        <div class="flex items-center gap-2">
-                            <div class="w-4 h-4 rounded-full air-quality-status" style="background-color: ${statusColor}"></div>
-                            <span class="text-sm font-semibold" style="color: ${statusColor}">${data.description}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
-                        <div class="text-center">
-                            <p class="text-2xl font-bold text-cyan-300 air-quality-value">${data.latestValue.toFixed(1)}</p>
-                            <p class="text-xs text-gray-400">Valor Atual</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-lg font-semibold text-gray-300">${data.averageValue.toFixed(1)}</p>
-                            <p class="text-xs text-gray-400">Média</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-sm font-semibold text-gray-300">${data.unit}</p>
-                            <p class="text-xs text-gray-400">Unidade</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-sm font-semibold text-gray-300">${data.locations.length}</p>
-                            <p class="text-xs text-gray-400">Estações</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-700/50 rounded-lg p-3">
-                        <p class="text-sm text-gray-300">
-                            <strong>Contexto Climático:</strong> ${getClimateContext(parameter, data.latestValue)}
-                        </p>
-                        <p class="text-sm text-gray-300 mt-2">
-                            <strong>Recomendação Sustentável:</strong> ${getSustainableRecommendation(parameter, data.status)}
-                        </p>
-                    </div>
-                </div>
-            `;
-        });
-
-        container.innerHTML = html;
-    }
-
-    function getClimateContext(parameter, value) {
-        const contexts = {
-            'pm25': 'Material particulado fino (PM₂.₅) é um dos principais poluentes atmosféricos que contribuem para o aquecimento global e problemas de saúde. Sua concentração está diretamente relacionada às emissões de combustíveis fósseis.',
-            'pm10': 'Material particulado (PM₁₀) inclui poeira, fuligem e outras partículas que podem transportar poluentes químicos. Sua presença na atmosfera afeta tanto a qualidade do ar quanto o clima global.',
-            'o3': 'O ozônio troposférico é um gás de efeito estufa potente que se forma pela reação entre poluentes emitidos por veículos e indústrias. Altas concentrações indicam poluição atmosférica significativa.',
-            'no2': 'Dióxido de nitrogênio é um gás tóxico que contribui para a formação de chuva ácida e smog. É principalmente emitido por veículos motorizados e processos industriais.',
-            'so2': 'Dióxido de enxofre é um poluente que pode causar chuva ácida e problemas respiratórios. Suas emissões estão relacionadas à queima de combustíveis fósseis.',
-            'co': 'Monóxido de carbono é um gás tóxico que contribui para o aquecimento global. É emitido principalmente por veículos e processos de combustão incompleta.'
-        };
-        
-        return contexts[parameter.toLowerCase()] || 'Este poluente afeta tanto a qualidade do ar quanto contribui para as mudanças climáticas globais.';
-    }
-
-    function getSustainableRecommendation(parameter, status) {
-        const recommendations = {
-            'good': 'Continue suas práticas sustentáveis! A qualidade do ar está boa, mas sempre há espaço para melhorar. Considere usar transporte público ou bicicleta para manter os níveis baixos.',
-            'moderate': 'A qualidade do ar está moderada. Reduza o uso de veículos individuais e considere alternativas de transporte sustentável. Desligue motores em paradas prolongadas.',
-            'unhealthy': 'A qualidade do ar está insalubre. Evite atividades ao ar livre intensas e use transporte público ou bicicleta. Considere trabalhar de casa se possível.',
-            'veryUnhealthy': 'A qualidade do ar está muito insalubre. Evite atividades ao ar livre e use máscaras se precisar sair. Reduza drasticamente o uso de veículos.',
-            'hazardous': 'A qualidade do ar está perigosa. Evite sair de casa e use máscaras se necessário. Esta situação destaca a urgência de ações climáticas imediatas.'
-        };
-        
-        return recommendations[status] || 'Mantenha-se informado sobre a qualidade do ar e adote práticas sustentáveis para contribuir com a melhoria ambiental.';
-    }
-
-    function updateWeatherCharacter(weatherData, airQualityData) {
+    function updateWeatherCharacter(weatherData) {
         const characterContainer = document.getElementById('weather-character');
+        if (!characterContainer) return;
+        
         const characterEmoji = characterContainer.querySelector('.character-emoji');
         const characterMessage = characterContainer.querySelector('.character-message');
         
-
+        if (!characterEmoji || !characterMessage) return;
+        
         characterContainer.className = 'weather-character';
         
-
         const weatherId = weatherData.current.weather[0].id;
         const temp = weatherData.current.temp;
-        const airQualityStatus = airQualityData ? getOverallAirQualityStatus(airQualityData) : 'unknown';
         
         let characterState = 'neutral';
         let emoji = '🌤️';
         let message = 'Vamos verificar as condições climáticas juntas!';
         
-
         if (weatherId >= 200 && weatherId <= 531) {
-    
             if (weatherId >= 200 && weatherId <= 232) {
                 emoji = '⛈️';
                 message = 'Trovões! Vamos ficar seguros e aproveitar para refletir sobre o clima!';
@@ -315,7 +201,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 characterState = 'excited';
             }
         } else if (weatherId === 800) {
-    
             if (temp > 30) {
                 emoji = '🔥';
                 message = 'Calor intenso! Vamos usar energia solar e economizar água!';
@@ -330,73 +215,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 characterState = 'happy';
             }
         } else if (weatherId >= 801 && weatherId <= 804) {
-    
             emoji = '☁️';
             message = 'Dia nublado! Ótimo para refletir sobre nossas ações climáticas!';
             characterState = 'neutral';
         }
         
-
-        if (airQualityStatus === 'good') {
-            emoji = '😊';
-            message = 'Excelente! A qualidade do ar está boa hoje!';
-            characterState = 'happy';
-        } else if (airQualityStatus === 'moderate') {
-            emoji = '😐';
-            message = 'Qualidade do ar moderada. Vamos fazer nossa parte!';
-            characterState = 'neutral';
-        } else if (airQualityStatus === 'unhealthy') {
-            emoji = '😷';
-            message = 'Atenção! Qualidade do ar insalubre. Vamos usar transporte sustentável!';
-            characterState = 'worried';
-        } else if (airQualityStatus === 'veryUnhealthy' || airQualityStatus === 'hazardous') {
-            emoji = '🤢';
-            message = 'Cuidado! Qualidade do ar muito ruim. Evite atividades ao ar livre!';
-            characterState = 'sad';
-        }
-        
-
         characterEmoji.textContent = emoji;
         characterMessage.textContent = message;
         
-
         setTimeout(() => {
             characterContainer.classList.add(characterState);
         }, 100);
         
-
         characterContainer.addEventListener('click', () => {
-            showCharacterTip(characterState, weatherData, airQualityData);
+            showCharacterTip(characterState, weatherData);
         });
         
-
         characterContainer.style.cursor = 'pointer';
     }
     
-    function getOverallAirQualityStatus(airQualityData) {
-
-        const parameters = Object.keys(airQualityData);
-        let worstStatus = 'good';
-        
-        parameters.forEach(parameter => {
-            const status = airQualityData[parameter].status;
-            const statusPriority = {
-                'good': 1,
-                'moderate': 2,
-                'unhealthy': 3,
-                'veryUnhealthy': 4,
-                'hazardous': 5
-            };
-            
-            if (statusPriority[status] > statusPriority[worstStatus]) {
-                worstStatus = status;
-            }
-        });
-        
-        return worstStatus;
-    }
     
-    function showCharacterTip(characterState, weatherData, airQualityData) {
+    
+    function showCharacterTip(characterState, weatherData) {
         const tips = {
             'happy': [
                 '🌱 Dica: Aproveite o bom tempo para plantar uma árvore!',
@@ -674,4 +514,571 @@ document.addEventListener("DOMContentLoaded", () => {
         window.open('jogo.html', '_blank');
     };
     
+    function calculatePersonalImpact() {
+        const userData = localStorage.getItem('userData');
+        if (!userData) {
+            showNoDataMessage();
+            return;
+        }
+
+        try {
+            const user = JSON.parse(userData);
+            const pontos = user.pontos || 0;
+            
+            const impact = calculateImpactFromPoints(pontos);
+            updateImpactDisplay(impact);
+            updateProgressBar(impact.impactScore);
+            
+        } catch (error) {
+            console.error('Error calculating personal impact:', error);
+            showNoDataMessage();
+        }
+    }
+
+    function calculateImpactFromPoints(pontos) {
+        const impact = {
+            treesEquivalent: Math.floor(pontos / 10),
+            carMonthsCompensated: Math.floor(pontos / 50),
+            homesPowered: Math.floor(pontos / 100),
+            impactScore: Math.min(100, Math.floor(pontos / 2)),
+            co2Offset: pontos * 2.2,
+            energyGenerated: pontos * 12
+        };
+
+        return impact;
+    }
+
+    function updateImpactDisplay(impact) {
+        const personalTrees = document.getElementById('personal-trees');
+        const carEmissions = document.getElementById('car-emissions');
+        const homesPowered = document.getElementById('homes-powered');
+        const impactScore = document.getElementById('impact-score');
+
+        if (personalTrees) personalTrees.textContent = impact.treesEquivalent;
+        if (carEmissions) carEmissions.textContent = impact.carMonthsCompensated;
+        if (homesPowered) homesPowered.textContent = impact.homesPowered;
+        if (impactScore) impactScore.textContent = impact.impactScore + '/100';
+
+        const summaryText = generateImpactSummary(impact);
+        const summaryElement = document.getElementById('impact-summary-text');
+        if (summaryElement) summaryElement.textContent = summaryText;
+    }
+
+    function generateImpactSummary(impact) {
+        let summary = '';
+        
+        if (impact.treesEquivalent > 0) {
+            summary += `Você já contribuiu para plantar ${impact.treesEquivalent} árvores equivalentes. `;
+        }
+        
+        if (impact.carMonthsCompensated > 0) {
+            summary += `Compensou ${impact.carMonthsCompensated} meses de emissões de carro. `;
+        }
+        
+        if (impact.homesPowered > 0) {
+            summary += `Gerou energia limpa para ${impact.homesPowered} casas. `;
+        }
+        
+        if (summary === '') {
+            summary = 'Comece sua jornada climática fazendo sua primeira doação!';
+        }
+        
+        return summary;
+    }
+
+    function updateProgressBar(score) {
+        const progressBar = document.getElementById('impact-progress');
+        const progressText = document.getElementById('progress-text');
+        
+        if (!progressBar || !progressText) return;
+        
+        const percentage = Math.min(100, score);
+        progressBar.style.width = percentage + '%';
+        progressText.textContent = percentage + '%';
+        
+        if (percentage >= 100) {
+            progressText.textContent = '100% - Herói Climático!';
+            progressBar.style.background = 'linear-gradient(45deg, #fbbf24, #f59e0b)';
+        }
+    }
+
+    function showNoDataMessage() {
+        const personalTrees = document.getElementById('personal-trees');
+        const carEmissions = document.getElementById('car-emissions');
+        const homesPowered = document.getElementById('homes-powered');
+        const impactScore = document.getElementById('impact-score');
+        const summaryText = document.getElementById('impact-summary-text');
+        const progressText = document.getElementById('progress-text');
+        const progressBar = document.getElementById('impact-progress');
+
+        if (personalTrees) personalTrees.textContent = '0';
+        if (carEmissions) carEmissions.textContent = '0';
+        if (homesPowered) homesPowered.textContent = '0';
+        if (impactScore) impactScore.textContent = '0/100';
+        if (summaryText) summaryText.textContent = 'Faça login ou registre-se para ver seu impacto pessoal!';
+        if (progressText) progressText.textContent = '0%';
+        if (progressBar) progressBar.style.width = '0%';
+    }
+
+    function refreshPersonalImpact() {
+        calculatePersonalImpact();
+    }
+
+    window.refreshPersonalImpact = refreshPersonalImpact;
+    
+    setTimeout(() => {
+        calculatePersonalImpact();
+    }, 1000);
+    
+    let nasaClimateChart;
+    
+    function updateChartStatus(status, message) {
+        const statusElement = document.getElementById('chart-status');
+        if (!statusElement) return;
+        
+
+    }
+
+    async function fetchNASAClimateData() {
+        try {
+            // Check if climate dashboard exists
+            const climateDashboard = document.querySelector('.nasa-climate-dashboard');
+            if (!climateDashboard) {
+                console.log('Climate dashboard not found, skipping NASA data fetch');
+                return;
+            }
+            
+            updateChartStatus('loading', 'Conectando com a NASA...');
+            
+            const userData = localStorage.getItem('userData');
+            if (!userData) return;
+            
+            const user = JSON.parse(userData);
+            const cidade = user.cidade;
+            
+            if (!cidade) return;
+            
+            const geoApiURL = `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${apiKey}&lang=pt_br`;
+            const geoResults = await fetch(geoApiURL);
+            const geoJson = await geoResults.json();
+            
+            if (geoJson.cod !== 200) return;
+            
+            const { lat, lon } = geoJson.coord;
+            
+            await fetchNASAPOWERData(lat, lon);
+            
+        } catch (error) {
+            console.error('Error fetching NASA climate data:', error);
+            updateChartStatus('mock', 'Erro na conexão com NASA - usando dados simulados');
+            showMockClimateData();
+        }
+    }
+    
+    async function fetchNASAPOWERData(lat, lon) {
+        try {
+            // Calculate dates more reliably - NASA allows max 366 days
+            const today = new Date();
+            const endDate = new Date(today);
+            endDate.setDate(today.getDate() - 2); // 2 days ago to be safe
+            
+            const startDate = new Date(endDate);
+            startDate.setDate(endDate.getDate() - 365); // Exactly 365 days back
+            
+            // Convert dates to NASA's expected format (YYYYMMDD as integers)
+            const startStr = startDate.getFullYear() * 10000 + (startDate.getMonth() + 1) * 100 + startDate.getDate();
+            const endStr = endDate.getFullYear() * 10000 + (endDate.getMonth() + 1) * 100 + endDate.getDate();
+            
+            console.log(`Fetching NASA POWER data for coordinates: ${lat}, ${lon}`);
+            console.log(`Date range: ${startStr} to ${endStr} (NASA format)`);
+            console.log(`Current date: ${today.toISOString().split('T')[0]}`);
+            console.log(`End date: ${endDate.toISOString().split('T')[0]} (should be in past)`);
+            console.log(`Start date: ${startDate.toISOString().split('T')[0]} (365 days back)`);
+            
+            // Validate date range - NASA API requires end date to be in the past
+            if (endDate >= today) {
+                throw new Error(`End date ${endDate.toISOString().split('T')[0]} is not in the past for NASA API`);
+            }
+            
+            if (startDate >= endDate) {
+                throw new Error('Start date must be before end date');
+            }
+            
+            // Calculate days difference to ensure it's within 366 day limit
+            const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+            if (daysDiff > 366) {
+                throw new Error(`Date range ${daysDiff} days exceeds NASA's 366 day limit`);
+            }
+            
+            // Use the NASA POWER point endpoint for single location data
+            // This is more appropriate for city-specific climate data
+            const nasaPowerURL = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M&community=RE&longitude=${lon}&latitude=${lat}&start=${startStr}&end=${endStr}&format=JSON`;
+            
+            console.log('NASA API URL:', nasaPowerURL);
+            console.log(`Point coordinates: lat ${lat}, lon ${lon}`);
+            console.log(`Days requested: ${daysDiff}`);
+            
+            const response = await fetch(nasaPowerURL);
+            
+            if (!response.ok) {
+                // Try to get the raw response text for debugging
+                const responseText = await response.text();
+                console.log('NASA API Raw Response:', responseText);
+                
+                throw new Error(`NASA API responded with status: ${response.status} - ${responseText}`);
+            }
+            
+            const data = await response.json();
+            console.log('NASA API Response:', data);
+            
+            if (data.properties && data.properties.parameter) {
+                console.log('Successfully fetched real NASA climate data!');
+                updateClimateDisplay(data.properties.parameter);
+                createClimateChart(data.properties.parameter);
+                updateChartStatus('real', 'Dados da NASA carregados com sucesso!');
+            } else {
+                console.log('NASA API response missing properties, using mock data');
+                updateChartStatus('mock', 'Dados da NASA não disponíveis - usando dados simulados');
+                showMockClimateData();
+            }
+            
+        } catch (error) {
+            console.error('Error fetching NASA POWER data:', error);
+            console.log('Falling back to mock data due to API error');
+            updateChartStatus('mock', 'Erro na conexão com NASA - usando dados simulados');
+            showMockClimateData();
+        }
+    }
+    
+    function updateClimateDisplay(climateData) {
+        if (climateData.T2M) {
+            // NASA data format: dates as keys, temperatures as values
+            const tempData = climateData.T2M;
+            const dates = Object.keys(tempData).filter(date => tempData[date] !== -999);
+            const temperatures = dates.map(date => tempData[date]);
+            
+            if (temperatures.length > 0) {
+                const currentTemp = temperatures[temperatures.length - 1]; // Most recent temperature
+                const avgTemp = temperatures.reduce((a, b) => a + b, 0) / temperatures.length;
+                const trend = currentTemp - avgTemp;
+                
+                const globalTemp = document.getElementById('global-temp');
+                const tempTrend = document.getElementById('temp-trend');
+                const climateAnomaly = document.getElementById('climate-anomaly');
+                
+                if (globalTemp) globalTemp.textContent = `${currentTemp.toFixed(1)}°C`;
+                if (tempTrend) tempTrend.textContent = `${trend > 0 ? '+' : ''}${trend.toFixed(1)}°C`;
+                if (climateAnomaly) climateAnomaly.textContent = `${Math.abs(trend).toFixed(1)}°C`;
+                
+                console.log(`Real NASA temperature data: Current ${currentTemp.toFixed(1)}°C, Average ${avgTemp.toFixed(1)}°C, Trend ${trend.toFixed(1)}°C`);
+                console.log(`Data covers ${dates.length} days from ${dates[0]} to ${dates[dates.length-1]}`);
+            }
+        }
+        
+        // Since we're only getting temperature data, set solar radiation to N/A
+        const solarRadiation = document.getElementById('solar-radiation');
+        if (solarRadiation) solarRadiation.textContent = 'N/A (T2M only)';
+    }
+    
+    function createClimateChart(climateData) {
+        const ctx = document.getElementById('nasaClimateChart');
+        if (!ctx) {
+            console.log('Climate chart canvas not found, skipping chart creation');
+            return;
+        }
+        
+        if (nasaClimateChart) {
+            nasaClimateChart.destroy();
+        }
+        
+        if (!climateData.T2M) {
+            console.log('No temperature data available for chart');
+            return;
+        }
+        
+        // NASA data format: dates as keys, temperatures as values
+        const tempData = climateData.T2M;
+        const dates = Object.keys(tempData).filter(date => tempData[date] !== -999); // Filter out missing data
+        const temperatures = dates.map(date => tempData[date]);
+        
+        console.log(`Creating chart with ${dates.length} real NASA data points`);
+        console.log('Temperature range:', Math.min(...temperatures).toFixed(1), 'to', Math.max(...temperatures).toFixed(1));
+        
+        // Convert NASA date format (YYYYMMDD) to readable format
+        const labels = dates.map(dateStr => {
+            const year = dateStr.substring(0, 4);
+            const month = dateStr.substring(4, 6);
+            const day = dateStr.substring(6, 8);
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('pt-BR', { month: 'short', day: '2-digit' });
+        });
+        
+        // Calculate historical average for comparison
+        const avgTemp = temperatures.reduce((a, b) => a + b, 0) / temperatures.length;
+        const historicalAvg = temperatures.map(() => avgTemp);
+        
+        try {
+            nasaClimateChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatura Real (NASA)',
+                        data: temperatures,
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        tension: 0.4,
+                        fill: false,
+                        pointRadius: 2,
+                        pointHoverRadius: 4
+                    }, {
+                        label: 'Média Histórica',
+                        data: historicalAvg,
+                        borderColor: '#4ecdc4',
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        tension: 0,
+                        fill: false,
+                        borderDash: [5, 5],
+                        pointRadius: 0,
+                        pointHoverRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 2,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                color: '#94a3b8',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#60a5fa',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        return `Temperatura: ${context.parsed.y.toFixed(1)}°C`;
+                                    } else {
+                                        return `Média: ${context.parsed.y.toFixed(1)}°C`;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                callback: function(value) {
+                                    return value.toFixed(1) + '°C';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Temperatura (°C)',
+                                color: '#94a3b8'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                maxRotation: 45,
+                                autoSkip: true,
+                                maxTicksLimit: 20
+                            },
+                            title: {
+                                display: true,
+                                text: 'Data',
+                                color: '#94a3b8'
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+            
+            console.log('Real NASA climate chart created successfully!');
+            console.log(`Chart shows ${temperatures.length} days of real temperature data`);
+            
+        } catch (error) {
+            console.error('Error creating climate chart:', error);
+        }
+    }
+    
+    function showMockClimateData() {
+        const globalTemp = document.getElementById('global-temp');
+        const tempTrend = document.getElementById('temp-trend');
+        const solarRadiation = document.getElementById('solar-radiation');
+        const climateAnomaly = document.getElementById('climate-anomaly');
+        
+        if (globalTemp) globalTemp.textContent = '15.2°C';
+        if (tempTrend) tempTrend.textContent = '+0.8°C';
+        if (solarRadiation) solarRadiation.textContent = '4.2 kWh/m²';
+        if (climateAnomaly) climateAnomaly.textContent = '0.8°C';
+        
+        updateChartStatus('mock', 'Dados simulados - NASA API indisponível');
+        createMockClimateChart();
+    }
+    
+    function createMockClimateChart() {
+        const ctx = document.getElementById('nasaClimateChart');
+        if (!ctx) {
+            console.log('Climate chart canvas not found, skipping mock chart creation');
+            return;
+        }
+        
+        if (nasaClimateChart) {
+            nasaClimateChart.destroy();
+        }
+        
+        const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'];
+        const currentTemps = [14.5, 15.1, 15.8, 16.2, 15.9, 15.2];
+        const historicalAvg = [14.0, 14.2, 14.5, 14.8, 15.0, 14.8];
+        
+        try {
+            nasaClimateChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temperatura Atual',
+                        data: currentTemps,
+                        borderColor: '#ff6b6b',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        tension: 0.4,
+                        fill: false
+                    }, {
+                        label: 'Média Histórica',
+                        data: historicalAvg,
+                        borderColor: '#4ecdc4',
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        tension: 0,
+                        fill: false,
+                        borderDash: [5, 5]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 2,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error creating mock climate chart:', error);
+        }
+    }
+    
+    setTimeout(() => {
+        fetchNASAClimateData();
+    }, 2000);
+    
+    setTimeout(() => {
+        const climateDashboard = document.querySelector('.nasa-climate-dashboard');
+        if (climateDashboard) {
+            showMockClimateData();
+        }
+    }, 5000);
+    
+});
+
+// ODS 13 Popup Modal Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const ods13PopupBtn = document.getElementById('ods13PopupBtn');
+    const ods13Modal = document.getElementById('ods13Modal');
+    const closeOds13Modal = document.getElementById('closeOds13Modal');
+    const closeOds13Modal2 = document.getElementById('closeOds13Modal2');
+    
+    if (ods13PopupBtn && ods13Modal) {
+        console.log('ODS 13 popup elements found, setting up event listeners');
+        
+        // Open modal
+        ods13PopupBtn.addEventListener('click', function() {
+            console.log('ODS 13 button clicked, opening modal');
+            ods13Modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        });
+        
+        // Close modal functions
+        function closeModal() {
+            console.log('Closing ODS 13 modal');
+            ods13Modal.classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+        
+        if (closeOds13Modal) {
+            closeOds13Modal.addEventListener('click', closeModal);
+        }
+        
+        if (closeOds13Modal2) {
+            closeOds13Modal2.addEventListener('click', closeModal);
+        }
+        
+        // Close modal when clicking outside
+        ods13Modal.addEventListener('click', function(e) {
+            if (e.target === ods13Modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !ods13Modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+        
+        console.log('ODS 13 popup event listeners set up successfully');
+    } else {
+        console.log('ODS 13 popup elements not found:', {
+            button: !!ods13PopupBtn,
+            modal: !!ods13Modal
+        });
+    }
 });

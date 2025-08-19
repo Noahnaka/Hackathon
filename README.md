@@ -113,7 +113,7 @@ const aqi = await fetchAirQualityData(-23.17, -45.88);
   1. Atualiza os pontos do usuário no backend: `PUT http://localhost:3000/user/data`.
   2. Cria preferência no MercadoPago: `POST https://api.mercadopago.com/checkout/preferences` (usa token de teste).
 - **Observações**: Rode o backend em `http://localhost:3000`. Substitua o token de teste por um seguro antes de produção e ajuste `back_urls`.
-
+sa
 Exemplo de uso:
 ```js
 import { criarPreferenciaDePagamento } from './frontend/apis/payApi.js';

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Caça Fumaça - Alerta Climático ODS 13</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -108,46 +109,6 @@
 
 
 
-            <h2 class="modal-title text-green-600">🎮 MeteoGame - Simulador Climático</h2>
-            
-            <div class="preview-game-container mb-6">
-              <div class="text-center mb-4">
-                <div class="text-4xl mb-2">🌍</div>
-                <h3 class="text-xl font-bold text-cyan-300">Sua Cidade Virtual</h3>
-                <p class="text-sm text-gray-600">Faça escolhas e veja o impacto imediato!</p>
-              </div>
-              
-      
-              <div class="grid grid-cols-3 gap-4 mb-4">
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-green-500" id="city-trees">5</div>
-                  <div class="text-xs text-gray-500">Árvores</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-blue-500" id="city-air">85</div>
-                  <div class="text-xs text-gray-500">Qualidade do Ar</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-yellow-500" id="city-energy">60</div>
-                  <div class="text-xs text-gray-500">Energia Limpa %</div>
-                </div>
-              </div>
-              
-      
-              <div class="space-y-3 mb-4">
-                <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <span class="text-sm">🌱 Plantar uma árvore</span>
-                  <button class="preview-choice-btn bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm" data-action="plant-tree" data-cost="10">R$ 10</button>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <span class="text-sm">☀️ Instalar painel solar</span>
-                  <button class="preview-choice-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm" data-action="solar-panel" data-cost="50">R$ 50</button>
-                </div>
-                <div class="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                  <span class="text-sm">🚲 Construir ciclovia</span>
-                  <button class="preview-choice-btn bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm" data-action="bike-lane" data-cost="30">R$ 30</button>
-                </div>
-              </div>
               
       
               <div id="preview-result" class="hidden p-3 bg-green-100 border border-green-300 rounded-lg text-center">
@@ -174,23 +135,74 @@
             class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center"
           ></div>
         </section>
-
-        ga
+        
         <section class="main-card">
-          <h2 class="section-title">🌬️ Qualidade do Ar e Impacto Climático</h2>
+          <h2 class="section-title">🌍 Calculadora de Impacto Pessoal</h2>
           
-  
-          <div id="weather-character-container" class="text-center mb-6">
-            <div class="weather-character" id="weather-character">
-              <div class="character-emoji text-6xl mb-2">🌤️</div>
-              <div class="character-message text-lg text-gray-300">Olá! Vamos verificar a qualidade do ar juntos!</div>
+          <div class="personal-impact-calculator">
+            <div class="impact-grid">
+              <div class="impact-card">
+                <div class="impact-icon">🌱</div>
+                <div class="impact-value" id="personal-trees">--</div>
+                <div class="impact-label">Árvores Equivalentes</div>
+                <div class="impact-description">Baseado nos seus pontos</div>
+              </div>
+              <div class="impact-card">
+                <div class="impact-icon">🚗</div>
+                <div class="impact-value" id="car-emissions">--</div>
+                <div class="impact-label">Meses de Carro Compensados</div>
+                <div class="impact-description">CO₂ neutralizado</div>
+              </div>
+              <div class="impact-card">
+                <div class="impact-icon">🏠</div>
+                <div class="impact-value" id="homes-powered">--</div>
+                <div class="impact-label">Casas com Energia Solar</div>
+                <div class="impact-description">Energia limpa gerada</div>
+              </div>
+              <div class="impact-card">
+                <div class="impact-icon">📱</div>
+                <div class="impact-value" id="impact-score">--</div>
+                <div class="impact-label">Score de Impacto</div>
+                <div class="impact-description">Sua contribuição climática</div>
+              </div>
+            </div>
+            <div class="impact-summary">
+              <div class="summary-title">📈 Resumo do Seu Impacto</div>
+              <div class="summary-text" id="impact-summary-text">
+                Carregando seus dados de impacto...
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="impact-progress"></div>
+              </div>
+              <div class="progress-label">
+                <span id="progress-text">0%</span> do caminho para ser um Herói Climático!
+              </div>
             </div>
           </div>
+        </section>
+
+        <section class="main-card">
+          <h2 class="section-title">🌍 Dados Reais do Clima</h2>
           
-          <div id="air-quality-container">
-            <div class="text-center text-gray-400">
-              <p>Carregando dados de qualidade do ar...</p>
+          <div class="nasa-climate-dashboard">
+          
+            
+            <div class="climate-chart-container">
+              <h3 class="climate-chart-title">📊 Tendência de Temperatura Global (NASA)</h3>
+  
+              <canvas id="nasaClimateChart"></canvas>
+              <div class="climate-legend">
+                <span class="legend-item">
+                  <span class="legend-color" style="background: #ff6b6b;"></span>
+                  Temperatura Real (NASA)
+                </span>
+                <span class="legend-item">
+                  <span class="legend-color" style="background: #4ecdc4;"></span>
+                  Média Histórica
+                </span>
+              </div>
             </div>
+            
           </div>
         </section>
 
@@ -239,6 +251,15 @@
                     </svg>
                 </div>
                 <h3 class="font-bold text-green-300 text-center block text-lg mb-3">Por que doar?</h3>
+                
+                <!-- ODS 13 Info Popup Button -->
+                <div class="text-center mb-4">
+                    <button id="ods13PopupBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg">
+                        🌍 O que é ODS 13?
+                    </button>
+                </div>
+
+
                 
                 <div class="space-y-3 text-sm">
                     <div class="flex items-start gap-2 donation-impact-item">
@@ -303,5 +324,67 @@
 </footer>
    <script src="apis/payApi.js" type="module"></script>
     <script src="script.js" type="module"></script>
+    
+    <!-- ODS 13 Popup Modal -->
+    <div id="ods13Modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg w-[32rem] h-[32rem] overflow-hidden shadow-2xl">
+            <div class="p-4 h-full flex flex-col">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-lg font-bold text-green-600">🌍 ODS 13</h2>
+                    <button id="closeOds13Modal" class="text-gray-500 hover:text-gray-700 text-xl font-bold">&times;</button>
+                </div>
+                
+                <div class="flex-1 space-y-3 text-gray-700 overflow-y-auto">
+                    <div>
+                        <h3 class="text-sm font-semibold text-green-700 mb-1">O que é ODS 13?</h3>
+                        <p class="text-xs leading-relaxed">
+                            Objetivo de Desenvolvimento Sustentável 13 da ONU para combater mudanças climáticas.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-semibold text-green-700 mb-1">Metas Principais:</h3>
+                        <ul class="text-xs space-y-1 list-disc list-inside">
+                            <li>Fortalecer resiliência climática</li>
+                            <li>Integrar medidas climáticas nas políticas</li>
+                            <li>Melhorar educação e conscientização</li>
+                            <li>Mobilizar US$ 100 bilhões anualmente</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-sm font-semibold text-green-700 mb-1">Links Úteis:</h3>
+                        <div class="grid grid-cols-1 gap-2">
+                            <a href="https://brasil.un.org/pt-br/sdgs/13" target="_blank" class="block bg-blue-50 hover:bg-blue-100 p-2 rounded border border-blue-200 transition-colors">
+                                <span class="text-blue-700 font-medium text-xs">🇺🇳 ONU Brasil - ODS 13</span>
+                            </a>
+                            <a href="https://www.ipea.gov.br/ods/ods13.html" target="_blank" class="block bg-green-50 hover:bg-green-100 p-2 rounded border border-green-200 transition-colors">
+                                <span class="text-green-700 font-medium text-xs">📊 IPEA - Indicadores</span>
+                            </a>
+                            <a href="https://www.climate.gov/" target="_blank" class="block bg-purple-50 hover:bg-purple-100 p-2 rounded border border-purple-200 transition-colors">
+                                <span class="text-purple-700 font-medium text-xs">🌡️ Climate.gov</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-green-50 p-3 rounded border border-green-200">
+                        <h3 class="text-sm font-semibold text-green-700 mb-1">💡 Como ajudar:</h3>
+                        <ul class="text-xs space-y-1 list-disc list-inside text-green-700">
+                            <li>Reduzir energia e usar renováveis</li>
+                            <li>Transporte público/elétrico</li>
+                            <li>Produtos locais e reciclagem</li>
+                            <li>Apoiar organizações ambientais</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <button id="closeOds13Modal2" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition-all duration-300 hover:scale-105 text-sm">
+                        Entendi! 🌱
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
   </body>
 </html>

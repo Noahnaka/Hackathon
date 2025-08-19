@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeteoGame - Simulador Climático</title>
+    <title>Simulador Climático</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -13,16 +13,23 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        * {
+            box-sizing: border-box;
         }
 
         .game-container {
             max-width: 900px;
+            width: 100%;
             margin: 0 auto;
             background: rgba(30, 41, 59, 0.8);
             border-radius: 20px;
-            padding: 30px;
+            padding: 40px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(34, 197, 94, 0.2);
+            box-sizing: border-box;
         }
 
         .game-title {
@@ -40,6 +47,8 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-bottom: 30px;
+            width: 100%;
+            max-width: 100%;
         }
 
         .status-card {
@@ -72,17 +81,23 @@
         .choices-container {
             background: rgba(51, 65, 85, 0.4);
             border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
+            padding: 30px;
+            margin: 0 15px 30px 15px;
+            width: calc(100% - 30px);
+            max-width: calc(100% - 30px);
+            box-sizing: border-box;
         }
 
         .choice-item {
             background: rgba(71, 85, 105, 0.6);
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 25px;
+            margin: 0 10px 20px 10px;
             border: 1px solid rgba(34, 197, 94, 0.2);
             transition: all 0.3s ease;
+            width: calc(100% - 20px);
+            max-width: calc(100% - 20px);
+            box-sizing: border-box;
         }
 
         .choice-item:hover {
@@ -166,10 +181,10 @@
         .result-message {
             background: linear-gradient(45deg, #22c55e, #16a34a);
             color: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 15px;
             text-align: center;
-            margin-bottom: 20px;
+            margin: 0 15px 20px 15px;
             opacity: 0;
             transform: scale(0.8);
             transition: all 0.5s ease;
@@ -216,8 +231,8 @@
             background: rgba(34, 197, 94, 0.1);
             border: 1px solid rgba(34, 197, 94, 0.3);
             border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
+            padding: 25px;
+            margin: 0 15px 25px 15px;
             text-align: center;
         }
 
@@ -261,10 +276,10 @@
         .simulation-notice {
             background: linear-gradient(45deg, #f59e0b, #d97706);
             color: white;
-            padding: 15px 20px;
+            padding: 20px 25px;
             border-radius: 12px;
             text-align: center;
-            margin-bottom: 25px;
+            margin: 0 10px 25px 10px;
             border: 2px solid rgba(245, 158, 11, 0.5);
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
             position: relative;
@@ -311,8 +326,8 @@
             background: rgba(139, 92, 246, 0.1);
             border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
+            padding: 25px;
+            margin: 0 15px 25px 15px;
             text-align: center;
         }
 
@@ -327,6 +342,8 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
+            width: 100%;
+            max-width: 100%;
         }
 
         .stat-item {
@@ -352,8 +369,8 @@
 </head>
 <body>
     <div class="game-container slide-in">
-
-        <div class="simulation-notice">
+        <div class="content-wrapper">
+            <div class="simulation-notice">
             <div class="simulation-notice-content">
                 <div class="simulation-title">
                     ⚠️ ATENÇÃO: SIMULAÇÃO EDUCATIVA
@@ -366,12 +383,7 @@
         </div>
 
         <div class="emoji">🌍</div>
-        <h1 class="game-title">MeteoGame - Simulador Climático</h1>
-        
-        <div class="description">
-            <p>Bem-vindo ao seu mundo virtual! Faça escolhas sustentáveis e veja o impacto imediato na sua cidade.</p>
-            <p class="text-sm mt-2">Esta é uma <strong>simulação educativa</strong> para demonstrar conceitos ambientais. Os valores são simplificados para fins de aprendizado.</p>
-        </div>
+        <h1 class="game-title">Simulador Climático</h1>
 
 
         <div class="impact-highlight">
@@ -470,10 +482,10 @@
 
 
         <button class="back-btn" onclick="goBack()">← Voltar ao Caça Fumaça</button>
+        </div>
     </div>
 
     <script>
-        // Estado inicial da cidade
         let cityState = {
             trees: 5,
             airQuality: 85,
@@ -483,7 +495,6 @@
             energySaved: 0
         };
 
-        // Função para fazer uma escolha
         function makeChoice(action, cost) {
             let message = '';
             let impact = '';
@@ -495,7 +506,7 @@
                     cityState.trees++;
                     cityState.totalTrees++;
                     cityState.airQuality = Math.min(100, cityState.airQuality + 2);
-                    cityState.co2Absorbed += 22; // 22kg CO2 por árvore por ano
+                    cityState.co2Absorbed += 22;
                     message = '🌱 Uma nova árvore foi plantada!';
                     impact = `+1 árvore, +2 qualidade do ar, +22kg CO₂ absorvidos por ano`;
                     co2Impact = 22;
@@ -504,7 +515,7 @@
                 case 'solar-panel':
                     cityState.cleanEnergy = Math.min(100, cityState.cleanEnergy + 8);
                     cityState.airQuality = Math.min(100, cityState.airQuality + 3);
-                    cityState.energySaved += 120; // 120 kWh por mês (estimativa)
+                    cityState.energySaved += 120;
                     message = '☀️ Painel solar instalado com sucesso!';
                     impact = `+8% energia limpa, +3 qualidade do ar, +120 kWh/mês economizados`;
                     energyImpact = 120;
@@ -513,33 +524,24 @@
                 case 'bike-lane':
                     cityState.airQuality = Math.min(100, cityState.airQuality + 5);
                     cityState.cleanEnergy = Math.min(100, cityState.cleanEnergy + 2);
-                    cityState.co2Absorbed += 15; // Redução de CO2 por menos carros
+                    cityState.co2Absorbed += 15;
                     message = '🚲 Nova ciclovia construída!';
                     impact = `+5 qualidade do ar, +2% energia limpa, +15kg CO₂ evitados por mês`;
                     co2Impact = 15;
                     break;
             }
 
-            // Atualizar estatísticas
             updateImpactStats();
-            
-            // Mostrar resultado
             showResult(message, impact);
-            
-            // Desabilitar botão temporariamente
             disableButton(action);
         }
 
-
-
-        // Atualizar estatísticas de impacto
         function updateImpactStats() {
             document.getElementById('total-trees').textContent = cityState.totalTrees;
             document.getElementById('co2-absorbed').textContent = cityState.co2Absorbed;
             document.getElementById('energy-saved').textContent = cityState.energySaved;
         }
 
-        // Mostrar resultado
         function showResult(message, impact) {
             const resultDiv = document.getElementById('result-message');
             resultDiv.innerHTML = `
@@ -548,15 +550,11 @@
             `;
             resultDiv.classList.add('show');
             
-            // Esconder após 4 segundos
             setTimeout(() => {
                 resultDiv.classList.remove('show');
             }, 4000);
         }
 
-
-
-        // Desabilitar botão temporariamente
         function disableButton(action) {
             const buttonId = action + '-btn';
             const button = document.getElementById(buttonId);
@@ -574,7 +572,6 @@
             }
         }
 
-        // Obter custo do botão
         function getButtonCost(action) {
             switch(action) {
                 case 'plant-tree': return 10;
@@ -584,18 +581,14 @@
             }
         }
 
-        // Função para voltar
         function goBack() {
-            // Se estiver em um iframe, fechar
             if (window.parent !== window) {
                 window.parent.postMessage('closePreview', '*');
             } else {
-                // Se estiver em uma nova aba, voltar
                 window.history.back();
             }
         }
 
-        // Adicionar efeitos de entrada
         document.addEventListener('DOMContentLoaded', function() {
             const elements = document.querySelectorAll('.status-card, .choice-item, .impact-highlight, .stats-summary');
             elements.forEach((el, index) => {
