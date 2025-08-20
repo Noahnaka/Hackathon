@@ -377,7 +377,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3000);
     }
 
-    const donateButton = document.getElementById("donateButton");
     const previewButton = document.getElementById("previewButton");
     const previewModal = document.getElementById("previewModal");
     const closePreviewBtn = document.getElementById("closePreviewBtn");
@@ -451,37 +450,77 @@ document.addEventListener("DOMContentLoaded", () => {
         updateDonationProgress();
     }
 
-    donateButton.addEventListener("click", async (event) => {
+    const donateButton = document.getElementById("donateButton");
+    const donationModal = document.getElementById("donationModal");
+    const confirmDonationBtn = document.getElementById("confirmDonationBtn");
+    const cancelDonationBtn = document.getElementById("cancelDonationBtn");
+    const donationAmountInput = document.getElementById("donationAmountInput");
+    const presetBtns = document.querySelectorAll(".preset-btn");
+
+    // Função pra mostrar o modal de doação, no estilo!
+    function showDonationModal() {
+        donationAmountInput.value = ''; // Limpa o valor anterior
+        presetBtns.forEach(btn => btn.classList.remove('selected'));
+        if (donationModal) donationModal.classList.add("visible");
+    }
+
+    // Função pra fechar o modal
+    function hideDonationModal() {
+        if (donationModal) donationModal.classList.remove("visible");
+    }
+
+    // Lida com os cliques nos valores pré-definidos
+    presetBtns.forEach(button => {
+        button.addEventListener('click', () => {
+            presetBtns.forEach(btn => btn.classList.remove('selected')); // Tira a seleção dos outros
+            button.classList.add('selected');
+            donationAmountInput.value = button.dataset.amount;
+        });
+    });
+    
+    // Se o parça digitar um valor, a gente limpa a seleção dos botões
+    donationAmountInput.addEventListener('input', () => {
+         presetBtns.forEach(btn => btn.classList.remove('selected'));
+    });
+
+    // Ouve o clique no botão principal de doação
+    donateButton.addEventListener("click", (event) => {
         event.preventDefault(); 
         const savedUserData = localStorage.getItem('userData');
         if (!savedUserData) {
             showModal("Você precisa se cadastrar na plataforma para doar. Preencha seus dados no topo da página!");
             return;
         }
+        showDonationModal(); // Em vez do prompt feião, a gente chama nosso modal monstro!
+    });
+
+    // Ouve o clique no botão de confirmar a doação lá no modal
+    confirmDonationBtn.addEventListener("click", async () => {
+        const savedUserData = localStorage.getItem('userData');
         const currentUser = JSON.parse(savedUserData);
-        const valorDoacao = prompt("Para fins de gamificação, digite o valor que você deseja doar (ex: 10,50):");
-        
-        if (valorDoacao === null) {
-            return; 
-        }
 
-        const valorCorrigido = valorDoacao.replace(",", ".");
+        const valorDoacao = donationAmountInput.value.replace(",", ".");
 
-        if (!valorCorrigido || isNaN(Number(valorCorrigido)) || Number(valorCorrigido) <= 0) {
-            showModal("Valor inválido. Por favor, insira um número maior que zero.");
+        // Se o valor for zuado, a gente dá uma tremidinha pra avisar
+        if (!valorDoacao || isNaN(Number(valorDoacao)) || Number(valorDoacao) <= 0) {
+            const inputContainer = document.querySelector('.donation-input-container');
+            inputContainer.style.animation = 'shake 0.5s';
+            setTimeout(() => inputContainer.style.animation = '', 500);
+            donationAmountInput.value = '';
+            donationAmountInput.placeholder = "Valor inválido!";
             return;
         }
 
-        showModal("Aguarde, estamos gerando seu link de pagamento seguro...");
-        
-        const linkDePagamento = await criarPreferenciaDePagamento(currentUser.nome, valorCorrigido);
+        hideDonationModal(); // Esconde o modal de doação
+        showModal("Aguarde, estamos gerando seu link de pagamento seguro..."); // Mostra o alerta de status
+
+        const linkDePagamento = await criarPreferenciaDePagamento(currentUser.nome, valorDoacao);
         
         if (linkDePagamento) {
-            currentUser.pontos = (currentUser.pontos || 0) + Number(valorCorrigido);
+            currentUser.pontos = (currentUser.pontos || 0) + Number(valorDoacao);
             localStorage.setItem('userData', JSON.stringify(currentUser));
             
-    
-            totalDonations += Number(valorCorrigido);
+            totalDonations += Number(valorDoacao);
             donationCount++;
             updateDonationProgress();
             
@@ -493,6 +532,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 1500);
         } else {
             showModal("Não foi possível criar o link de pagamento. Verifique o console (F12) para mais detalhes do erro.");
+        }
+    });
+
+    // Ouve o clique no botão de cancelar
+    cancelDonationBtn.addEventListener("click", hideDonationModal);
+
+    // Também fecha se clicar fora do modal
+    donationModal.addEventListener("click", (event) => {
+        if (event.target === donationModal) {
+            hideDonationModal();
         }
     });
 

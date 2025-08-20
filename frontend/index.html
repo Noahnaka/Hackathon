@@ -252,7 +252,6 @@
                 </div>
                 <h3 class="font-bold text-green-300 text-center block text-lg mb-3">Por que doar?</h3>
                 
-                <!-- ODS 13 Info Popup Button -->
                 <div class="text-center mb-4">
                     <button id="ods13PopupBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg">
                         🌍 O que é ODS 13?
@@ -325,7 +324,6 @@
    <script src="apis/payApi.js" type="module"></script>
     <script src="script.js" type="module"></script>
     
-    <!-- ODS 13 Popup Modal -->
     <div id="ods13Modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-lg w-[32rem] h-[32rem] overflow-hidden shadow-2xl">
             <div class="p-4 h-full flex flex-col">
@@ -386,5 +384,29 @@
             </div>
         </div>
     </div>
+    
+    <div id="donationModal" class="modal-overlay">
+        <div class="modal-content donation-modal-content">
+            <h2 class="modal-title donation-title">🌱 Faça sua Doação</h2>
+            <p class="modal-message donation-message">Sua contribuição impulsiona projetos que combatem as mudanças climáticas. Cada real conta!</p>
+            
+            <div class="donation-presets">
+                <button class="preset-btn" data-amount="10">R$ 10</button>
+                <button class="preset-btn" data-amount="25">R$ 25</button>
+                <button class="preset-btn" data-amount="50">R$ 50</button>
+            </div>
+
+            <div class="donation-input-container">
+                <span>R$</span>
+                <input type="number" id="donationAmountInput" placeholder="Outro valor" class="donation-input">
+            </div>
+
+            <div class="donation-actions">
+                <button id="confirmDonationBtn" class="modal-close-btn confirm-btn">Confirmar Doação</button>
+                <button id="cancelDonationBtn" class="modal-close-btn cancel-btn">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
   </body>
 </html>
