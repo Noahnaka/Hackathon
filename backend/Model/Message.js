@@ -15,16 +15,13 @@ class Message {
         try {
             const [rows] = await conexao.promise().execute(SQL);
     
-            // Step 1: unique locations
             const uniqueLocations = [...new Set(rows.map(r => r.localizacao))];
     
-        // Step 2: call API once per location
         const locationResponses = {};
         for (const loc of uniqueLocations) {
             try {
                 const apiKey = "7a2791ab1c9e89014a098d47a489fb53";
 
-                // 1st call: basic city + coords
                 const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(loc)}&appid=${apiKey}&lang=pt_br&units=metric`);
                 const basicData = await response.json();
 
@@ -37,12 +34,10 @@ class Message {
                 const { lat, lon } = basicData.coord;
                 const cityName = basicData.name;
 
-                // 2nd call: onecall data
                 const oneCallApiURL = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly&appid=${apiKey}&units=metric&lang=pt_br`;
                 const oneCallResults = await fetch(oneCallApiURL);
                 const data = await oneCallResults.json();
 
-                // Save everything for later
                 locationResponses[loc] = {
                     city: cityName,
                     current: data.current,
@@ -56,7 +51,6 @@ class Message {
             }
         }
 
-        // Step 3: send messages
         for (const user of rows) {
             const weather = locationResponses[user.localizacao];
             if (!weather) continue;
@@ -65,7 +59,6 @@ class Message {
             const tempMax = weather.daily[0].temp.max;
             const tempMin = weather.daily[0].temp.min;
 
-            // Texto de alerta climático (com base nas condições)
             let alertaClimatico = "";
 
             if (weatherId >= 200 && weatherId <= 531) {
@@ -102,7 +95,6 @@ class Message {
                 alertaClimatico = "✅ Nenhum alerta climático específico para hoje.";
             }
 
-            // Monta a mensagem final
             const mensagem =
                 `Olá ${user.nome}!\n` +
                 `Localização: ${weather.city}\n\n` +
